@@ -85,8 +85,8 @@ router.post('/signin', function (req, res) {
 //movies:
 router.route('/movies')
     .post(authJwtController.isAuthenticated, function (req, res) {
-        if (!req.body.title || !req.body.year_released || !req.body.genre || !req.body.actors[0] || !req.body.actors[1] || !req.body.actors[2] || !req.body.actors[3]) {
-            return res.json({ success: false, message: 'Error: Putall information for title, year released, genre, and 3 actors.'});
+        if (!req.body.title || !req.body.year_released || !req.body.genre || !req.body.actors[0] || !req.body.actors[1] || !req.body.actors[2] || !req.body.actors) {
+            return res.json({ success: false, message: 'Error: Put all information for title, year released, genre, and 3 actors.'});
         } else {
             var movie = new Movie();
 
