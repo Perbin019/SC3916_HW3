@@ -1,18 +1,21 @@
 var passport = require('passport');
-var BasicStrategy = require('passport-http').BasicStrategy;
+var JwtStrategy = require('passport-jwt').Strategy;
+var ExtractJwt = require('passport-jwt').ExtractJwt;
+var User = require('./Users');
 
-passport.use(new BasicStrategy(
-   function(username, password, done) {
-       var user = { name: "cu_user"}; //could have called to a database to look this up
-       if (username === user.name && password === "cu_rulez") // tripple equal is type and value; double == is just equal
-       {
-           return done(null, user);
-       }
-       else
-       {
-           return done(null, false);
-       }
-   }
-));
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
+opts.secretOrKey = process.env.SECRET_KEY;
 
-exports.isAuthenticated = passport.authenticate('basic', { session: false });
+passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+    User.findById(jwt_payload.id, function (err, user) {
+        if (user) {
+            done(null, user);
+        } else {
+            done(null, false);
+        }
+    });
+}));
+
+exports.isAuthenticated = passport.authenticate('jwt', { session : false });
+exports.secret = opts.secretOrKey ;
